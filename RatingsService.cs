@@ -1,3 +1,4 @@
+using System;
 using BFYOC.Models;
 
 namespace BFYOC
@@ -6,8 +7,11 @@ namespace BFYOC
     {
         public CreateRatingResponse Create(CreateRatingRequest request)
         {
-            
-            return new CreateRatingResponse();
+            // call into cosmos to create the rating for the given product
+            var response = new CreateRatingResponse(request);
+            response.Id = Guid.NewGuid();
+            response.TimeStamp = DateTime.UtcNow;
+            return response;
         }
     }
 }

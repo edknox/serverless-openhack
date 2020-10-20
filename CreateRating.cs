@@ -17,7 +17,7 @@ namespace BFYOC
         private static readonly ProductService productService = new ProductService();
         private static readonly UserService userService = new UserService();
         private static readonly RatingService ratingService = new RatingService();
-        
+
         [FunctionName("CreateRating")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
@@ -33,16 +33,16 @@ namespace BFYOC
                 return new BadRequestObjectResult("ProductId is not a guid");
 
             // validate the product exists
-            var product = productService.GetProduct(productId);
+            var product = await productService.GetProductAsync(productId);
             if (product == null)
                 return new NotFoundObjectResult($"product {productId} was not found");
 
             // validate user id is a guid
-            if (!Guid.TryParse(createRatingRequest.ProductId, out Guid userId))
+            if (!Guid.TryParse(createRatingRequest.UserId, out Guid userId))
                 return new BadRequestObjectResult("UserId is not a guid");
 
             // validate the user exists
-            var user = userService.GetUser(userId);
+            var user = await userService.GetUserAsync(userId);
             if(user == null)
                 return new NotFoundObjectResult($"user {userId} was not found");            
 
