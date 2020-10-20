@@ -21,6 +21,7 @@ namespace BFYOC
         [FunctionName("CreateRating")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [CosmosDB("BFYOC", "rating", ConnectionStringSetting="CosmosConnection")]IAsyncCollector<Models.CreateRatingResponse> document,
             ILogger log)
         {
             log.LogInformation("Create Rating function called");
@@ -51,6 +52,8 @@ namespace BFYOC
                 return new BadRequestObjectResult("Rating must be a value between 0 and 5");
 
             var response = ratingService.Create(createRatingRequest);
+            await document.AddAsync(response);
+            
             return new CreatedResult("ratings", response);
         }
     }
